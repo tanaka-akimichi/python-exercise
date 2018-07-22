@@ -13,17 +13,13 @@ def img_show(img):
     pil_img = Image.fromarray(np.uint8(img))
     pil_img.show()
 
-(x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=True)
-#(x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=False)
 
-# tmp = x_train[0] + x_train[1]
-# print('shape={}'.format(x_train[0].shape))
-# print('shape={}'.format(x_train[1].shape))
-# print('shape={}'.format(tmp.shape))
+(x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=True)
+# (x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=False)
 
 # Extend the display size.
 # rcParams['figure.figsize'] = 10, 10
-rcParams['figure.figsize'] = 20, 20 # for ASUS Note PC
+rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
 
 def show_label_image(start, row_number, column_number, data_type):
     """
@@ -35,7 +31,8 @@ def show_label_image(start, row_number, column_number, data_type):
     :return: None
     """
     if data_type != 'train' and data_type != 'test':
-        print("usage: show_label_image(start, row_number, column_number, data_type)")
+        print("usage: show_label_image(start, row_number, column_number, "
+              "data_type)")
         print("data_type must be train or test. ({}).".format(data_type))
         return
 
@@ -57,15 +54,17 @@ def show_label_image(start, row_number, column_number, data_type):
         img[i] = img[i].reshape(28, 28)   # 形状を元の画像サイズに変形
 
         # No labels and no ticks.
-        ax1.tick_params(labelbottom=False, labelleft=False, labelright=False, labeltop=False,
+        ax1.tick_params(labelbottom=False, labelleft=False, labelright=False,
+                        labeltop=False,
                         length=0)
         ax1.imshow(img[i])
     plt.show()
 
+
 start_number = input("Please Enter Start Number: ")
 train_or_test = input("Please Enter train or test: ")
 
-# The numbers below are number to be recommended.
+# The numbers to be recommended are as follows.
 row_number = 5
 column_number = 10
 show_label_image(int(start_number), row_number, column_number, train_or_test)
