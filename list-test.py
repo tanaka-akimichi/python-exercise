@@ -8,6 +8,8 @@ print(mydict)
 print(mylist0)
 print(mylist1)
 
+
+
 for c in ('0', '1'):
     if c in mydict:
         mydict[c] += mylist0
