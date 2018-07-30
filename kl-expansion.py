@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 # import sys, os
 # sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
+import math
 import numpy as np
 import pickle
 
@@ -96,10 +97,18 @@ if __name__ == '__main__':
     x1 = np.dot(x, eigen_vectors_matrix)
 
     for i in range(1, 60000):
+    # for i in range(1, 1000):  # for debug
         x = x_train[i]
         x1 = np.vstack((x1, np.dot(x, eigen_vectors_matrix)))
 
-    print(eigen_values_vector[:10])
+    print(eigen_values_vector[:30])
+
+    # Normalization
+    for i in range(784):
+        if (eigen_values_vector[i] > 1.0e-5):
+            x1[:, i] /= np.sqrt(eigen_values_vector[i])
+        else:
+            x1[:, i] = 0
 
     # Check the values!
     for i in range(10):
@@ -107,6 +116,10 @@ if __name__ == '__main__':
         var = np.var(x1[:,i])
         print('mean[{}]={}'.format(i, mean))  # mean should be zero.
         print('var[{}]={}'.format(i, var))  # var[i] should be eigen value[i]
+
+    # Normalization
+    # for i in range(784):
+    #     x1[:, i] /= np.sqrt(eigen_values_vector[i])
 
     plt.plot(x1[:,0], x1[:,1], 'x')
     plt.xlim(-8, 8)

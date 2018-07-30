@@ -31,8 +31,8 @@ print('x_test size: {}'.format(len(x_test)))
 original_image_size = 28
 
 # Extend the display size.
-rcParams['figure.figsize'] = 10, 10
-# rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
+# rcParams['figure.figsize'] = 10, 10
+rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
 
 
 def show_label_image(start, row_number, column_number, data_type):
@@ -204,7 +204,7 @@ def recognize_image_samples(data_type):
     Recognize image samples using image dictionary made from train data
     and L2 distance.
     :param data_type: train or test. samples to be recognized.
-    :return: image dictionary
+    :return: confusion matrix
     """
     if data_type != 'train' and data_type != 'test':
         print("usage: recognize_image_samples(data_type)")
@@ -245,13 +245,13 @@ def recognize_image_samples(data_type):
 
     return confusion_matrix
 
-# start_number = input("Please Enter Start Number: ")
-# train_or_test = input("Please Enter train or test: ")
+start_number = input("Please Enter Start Number: ")
+train_or_test = input("Please Enter train or test: ")
 
 # The numbers to be recommended are as follows.
 row_number = 5
 column_number = 10
-# show_label_image(int(start_number), row_number, column_number, train_or_test)
+show_label_image(int(start_number), row_number, column_number, train_or_test)
 # make_image_dictionary('train')
 # make_image_dictionary('test')
 v, w = make_image_eigen_vectors('train')
