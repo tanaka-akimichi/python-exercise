@@ -83,5 +83,10 @@ outside_loop = 10
 inside_loop = 100
 elapsed time(cupy) = 316.5533458640628
 elapsed time(numpy) = 3178.9956735987694
+
+i7-6700HQ @2.60GHZ
+NVIDIA GeForce GTX 950M
+elapsed time(cupy) = 207.7212834454453
+elapsed time(numpy) = 3698.0998210764724
 """
 
