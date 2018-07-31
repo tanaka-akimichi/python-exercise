@@ -105,7 +105,7 @@ if __name__ == '__main__':
     for i in range(10):
         mean = np.mean(x1[:,i])
         var = np.var(x1[:,i])
-        print('mean[{}]={}'.format(i, mean))  # mean should be zero.
+        print('mean[{}]={}'.format(i, mean))
         print('var[{}]={}'.format(i, var))  # var[i] should be eigen value[i]
 
     plt.plot(x1[:,0], x1[:,1], 'x')
