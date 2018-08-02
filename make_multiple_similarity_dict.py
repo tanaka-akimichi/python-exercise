@@ -19,8 +19,8 @@ print('x_test size: {}'.format(len(x_test)))
 original_image_size = 28
 
 # Extend the display size.
-rcParams['figure.figsize'] = 10, 10
-# rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
+# rcParams['figure.figsize'] = 10, 10
+rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
 
 
 def calculate_multiple_similarity(x, eigen_values, eigen_vectors, dim):
@@ -75,8 +75,8 @@ def make_multiple_similarity_dict(data_type):
     eigen_number = 5
 
     # Read data and add to each category.
-    # for i in range(data_number):
-    for i in range(1000):  # for debug
+    for i in range(data_number):
+    # for i in range(1000):  # for debug
         img = eval('x_{}[i]'.format(data_type))
         label = eval('t_{}[i]'.format(data_type))
         if label in img_data:
@@ -90,9 +90,13 @@ def make_multiple_similarity_dict(data_type):
     for c in range(category_number):
         # autocorrelation_matrix = np.dot(img_data[c].T, img_data[c]) / count_data[c]
         autocorrelation_matrix = cp.dot(img_data[c].T, img_data[c]) / count_data[c]
-        w, v = np.linalg.eig(autocorrelation_matrix)
-        eigen_values_dict[c] = np.real(w)
-        eigen_vectors_dict[c] = np.real(v)
+        w, v = np.linalg.eigh(autocorrelation_matrix)
+        # eigen_values_dict[c] = np.real(w)
+        # eigen_vectors_dict[c] = np.real(v)
+        eigen_values_dict[c] = w[::-1]
+        eigen_vectors_dict[c] = v
+        for i in range(v.shape[0]):
+            eigen_vectors_dict[c][i] = eigen_vectors_dict[c][i][::-1]
         print('c={}'.format(c))
         print('w={}'.format(eigen_values_dict[c][:10]))
         print('v={}'.format(eigen_vectors_dict[c][:,0]))
@@ -139,7 +143,7 @@ def recognize_image_samples_multiple_similarity \
 
     category_number = 10
     data_number = eval('len(x_{})'.format(data_type))
-    distance_dict = {}
+    similarity_dict = {}
 
     """
     Elements of confusion_matrix[i, j] represents the number 
@@ -159,9 +163,9 @@ def recognize_image_samples_multiple_similarity \
         img = eval('x_{}[i]'.format(data_type))
         label = eval('t_{}[i]'.format(data_type))
         for c in range(category_number):
-            distance_dict[c] = \
+            similarity_dict[c] = \
                 calculate_multiple_similarity(img, eigen_values_dict[c], eigen_vectors_dict[c], dim)
-        sorted_distance = sorted(distance_dict.items(), key=lambda x: x[1], reverse=True)
+        sorted_distance = sorted(similarity_dict.items(), key=lambda x: x[1], reverse=True)
 
         # if label != sorted_distance[0][0]:
         #     print('----sample {}------'.format(i))
@@ -177,12 +181,12 @@ def recognize_image_samples_multiple_similarity \
 
 if __name__ == '__main__':
 
-    make_multiple_similarity_dict('train')
+    # make_multiple_similarity_dict('train')
     eigen_values_file = 'x_train_eigen_values_dict.pickle'
     eigen_vectors_file = 'x_train_eigen_vectors_dict.pickle'
-    dim = 600
+    dim = 200
     confusion_matrix = recognize_image_samples_multiple_similarity \
-        ('train', eigen_values_file, eigen_vectors_file, dim)
+        ('test', eigen_values_file, eigen_vectors_file, dim)
 
     print(confusion_matrix)
 
@@ -205,3 +209,18 @@ if __name__ == '__main__':
     print('correct_total={}'.format(correct_total))
     print('accuracy={}'.format(correct_total / sum_total))
 
+"""
+0:0.9316326530612244
+1:0.9700440528634361
+2:0.7926356589147286
+3:0.8485148514851485
+4:0.824847250509165
+5:0.7477578475336323
+6:0.8997912317327766
+7:0.8365758754863813
+8:0.7823408624229979
+9:0.8354806739345887
+sum_total=10000.0
+correct_total=8493.0
+accuracy=0.8493
+"""

@@ -29,7 +29,7 @@ points, and its eigen values and eigen vectors.
 
 # Get eigen values w[] and eigen vectors v[][]
 autocorrelation_matrix = np.dot(data_matrix.T, data_matrix) / sample_number
-w, v = np.linalg.eig(autocorrelation_matrix)
+w, v = np.linalg.eigh(autocorrelation_matrix)
 print('autocorrelation matrix:\n{}'.format(autocorrelation_matrix))
 print('w = {}'.format(w))
 print('v = {}'.format(v))
