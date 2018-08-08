@@ -22,29 +22,6 @@ original_image_size = 28
 rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
 
 
-def calculate_multiple_similarity(x, eigen_values, eigen_vectors, dim):
-    """
-    :param x: Input vectors. The multiple similarity for x
-    :param eigen_values: eigen values for a category
-    :param eigen_vectors: eigen vectors for a category
-    :param dim: dimension to be used
-    :return: multiple similarity of x for a category
-    """
-
-    if len(eigen_values) < dim:
-        print("The length of the eigen vector is equal to or greater than dim.")
-        return
-
-    similarity = 0
-    for i in range(dim):
-        work = np.dot(eigen_vectors[:,i], x)
-        # similarity += eigen_values[i] * work * work
-        similarity += work * work
-
-    # return similarity / eigen_values[0]
-    return similarity
-
-
 def calculate_subspace_similarity(x, eigen_vectors, dim):
     """
     :param x: Input vectors. The multiple similarity for x
@@ -61,7 +38,7 @@ def calculate_subspace_similarity(x, eigen_vectors, dim):
     return similarity
 
 
-def make_multiple_similarity_dict(data_type):
+def make_subspace_similarity_dict(data_type):
     """
     Make multiple similarity dictionary from dict_type image data
     :param dict_type: image data source type
@@ -138,13 +115,12 @@ def make_multiple_similarity_dict(data_type):
 
     return eigen_values_dict, eigen_vectors_dict
 
-def recognize_image_samples_using_similarity \
-            (data_type, eigen_values_file, eigen_vectors_matrix_file, dim):
+
+def recognize_image_samples_subspace_similarity \
+            (data_type, eigen_vectors_matrix_file, dim):
     """
     Recognize image samples using multiple similarity
     :param data_type: train or test. samples to be recognized.
-    :param eigen_values_file: pickled file of eigen values
-        of autocorrelation matrix
     :param eigen_vectors_matrix_file: pickled file of eigen vectors matrix
         of autocorrelation matrix
     :param dim: dimension to be used
@@ -165,21 +141,16 @@ def recognize_image_samples_using_similarity \
     """
     confusion_matrix = np.zeros((10, 10))
 
-    # Load eigen values and eigen vectors file.
-    with open(eigen_values_file, 'rb') as f:
-        eigen_values_dict = pickle.load(f)
+    # Load eigen vectors file.
     with open(eigen_vectors_matrix_file, 'rb') as f:
         eigen_vectors_dict = pickle.load(f)
 
-    # Read data and calculate similarity to the data
+    # Read data and calculate subspace similarity to the data
     # for each category.
     for i in range(data_number):
         img = eval('x_{}[i]'.format(data_type))
         label = eval('t_{}[i]'.format(data_type))
         for c in range(category_number):
-            # similarity_dict[c] = \
-            #     calculate_multiple_similarity(img, eigen_values_dict[c], \
-            #                                   eigen_vectors_dict[c], dim)
             similarity_dict[c] = \
                 calculate_subspace_similarity(img, eigen_vectors_dict[c], dim)
         sorted_distance = sorted(similarity_dict.items(), key=lambda x: x[1], reverse=True)
@@ -198,12 +169,12 @@ def recognize_image_samples_using_similarity \
 
 if __name__ == '__main__':
 
-    # make_multiple_similarity_dict('train')
-    eigen_values_file = 'x_train_eigen_values_dict.pickle'
+    # make_subspace_similarity_dict('train')
+    # eigen_values_file = 'x_train_eigen_values_dict.pickle'
     eigen_vectors_file = 'x_train_eigen_vectors_dict.pickle'
-    dim = 60
-    confusion_matrix = recognize_image_samples_using_similarity \
-        ('test', eigen_values_file, eigen_vectors_file, dim)
+    dim = 30
+    confusion_matrix = recognize_image_samples_subspace_similarity \
+        ('test', eigen_vectors_file, dim)
 
     print(confusion_matrix)
 
@@ -228,17 +199,22 @@ if __name__ == '__main__':
     print('accuracy={}'.format(correct_total / sum_total))
 
 """
-0:0.9316326530612244
-1:0.9700440528634361
-2:0.7926356589147286
-3:0.8485148514851485
-4:0.824847250509165
-5:0.7477578475336323
-6:0.8997912317327766
-7:0.8365758754863813
-8:0.7823408624229979
-9:0.8354806739345887
-sum_total=10000.0
-correct_total=8493.0
-accuracy=0.8493
+The best accuracy was obtained when the dimension used is 30.
+dim=10
+accuracy=0.9485
+
+dim=20
+accuracy=0.9573
+
+dim=30
+accuracy=0.9574
+
+dim=40
+accuracy=0.957
+
+dim=50
+accuracy=0.9514
+
+dim=60
+accuracy=0.9452
 """
