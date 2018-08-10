@@ -63,38 +63,48 @@ def make_subspace_similarity_dict(data_type):
     fig = plt.figure()
     img_data = {}
     count_data = {}
-    eigen_values_dict = {}
-    eigen_vectors_dict = {}
-    eigen_number = 5
-
-    # Read data and add to each category.
-    for i in range(data_number):
-    # for i in range(1000):  # for debug
-        img = eval('x_{}[i]'.format(data_type))
-        label = eval('t_{}[i]'.format(data_type))
-        if label in img_data:
-            img_data[label] = np.vstack((img_data[label], img))
-            count_data[label] += 1
-        else:
-            img_data[label] = img
-            count_data[label] = 1
-
-    # Get eigen values w[] and eigen vectors v[][]
-    for c in range(category_number):
-        autocorrelation_matrix = np.dot(img_data[c].T, img_data[c]) / count_data[c]
-        w, v = np.linalg.eigh(autocorrelation_matrix)
-        eigen_values_dict[c] = w[::-1]  # reverse
-        eigen_vectors_dict[c] = v
-        for i in range(v.shape[0]):
-            # Reverse with respect to each row
-            eigen_vectors_dict[c][i] = eigen_vectors_dict[c][i][::-1]
-        print('c={}'.format(c))
-        print('w={}'.format(eigen_values_dict[c][:10]))
-        print('v={}'.format(eigen_vectors_dict[c][:,0]))
+    subspace_eigen_values_dict = {}
+    subspace_eigen_vectors_dict = {}
+    eigen_number = 5  # for display
+    
+    # Check if the subspace eigen dictionaries already exist.
+    subspace_eigen_values_dict_file_name = 'x_{}_subspace_eigen_values_dict.pickle'.format(data_type)
+    subspace_eigen_vector_dict_file_name = 'x_{}_subspace_eigen_vectors_dict.pickle'.format(data_type)
+    if os.path.exists(subspace_eigen_values_dict_file_name) \
+            and os.path.exists(subspace_eigen_values_dict_file_name):
+        with open(subspace_eigen_values_dict_file_name, 'rb') as f:
+            subspace_eigen_values_dict = pickle.load(f)
+        with open(subspace_eigen_vector_dict_file_name, 'rb') as f:
+            subspace_eigen_vectors_dict = pickle.load(f)
+    else:
+        # Read data and add to each category.
+        for i in range(data_number):
+        # for i in range(1000):  # for debug
+            img = eval('x_{}[i]'.format(data_type))
+            label = eval('t_{}[i]'.format(data_type))
+            if label in img_data:
+                img_data[label] = np.vstack((img_data[label], img))
+                count_data[label] += 1
+            else:
+                img_data[label] = img
+                count_data[label] = 1
+    
+        # Get eigen values w[] and eigen vectors v[][]
+        for c in range(category_number):
+            autocorrelation_matrix = np.dot(img_data[c].T, img_data[c]) / count_data[c]
+            w, v = np.linalg.eigh(autocorrelation_matrix)
+            subspace_eigen_values_dict[c] = w[::-1]  # reverse
+            subspace_eigen_vectors_dict[c] = v
+            for i in range(v.shape[0]):
+                # Reverse with respect to each row
+                subspace_eigen_vectors_dict[c][i] = subspace_eigen_vectors_dict[c][i][::-1]
+            print('c={}'.format(c))
+            print('w={}'.format(subspace_eigen_values_dict[c][:10]))
+            print('v={}'.format(subspace_eigen_vectors_dict[c][:,0]))
 
     # Display eigen vectors of image for each category.
     for c in range(category_number):
-        img_c = eigen_vectors_dict[c]
+        img_c = subspace_eigen_vectors_dict[c]
         for i in range(eigen_number):
             ax1 = fig.add_subplot(row_number, column_number, c * eigen_number + i + 1)
             img = img_c[:,i].reshape(original_image_size, original_image_size)
@@ -109,11 +119,11 @@ def make_subspace_similarity_dict(data_type):
 
     # Save the average image dictionary.
     with open(eigen_values_dict_file_name, 'wb') as f:
-        pickle.dump(eigen_values_dict, f)
+        pickle.dump(subspace_eigen_values_dict, f)
     with open(eigen_vectors_dict_file_name, 'wb') as f:
-        pickle.dump(eigen_vectors_dict, f)
+        pickle.dump(subspace_eigen_vectors_dict, f)
 
-    return eigen_values_dict, eigen_vectors_dict
+    return subspace_eigen_values_dict, subspace_eigen_vectors_dict
 
 
 def recognize_image_samples_subspace_similarity \
@@ -207,7 +217,7 @@ dim=20
 accuracy=0.9573
 
 dim=30
-accuracy=0.9574
+accuracy=0.9574 *****
 
 dim=40
 accuracy=0.957
