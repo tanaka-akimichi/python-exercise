@@ -51,9 +51,6 @@ def make_subspace_similarity_dict(data_type):
         print("data_type must be train or test. ({}).".format(data_type))
         return
 
-    eigen_values_dict_file_name = 'x_{}_eigen_values_dict.pickle'.format(data_type)
-    eigen_vectors_dict_file_name = 'x_{}_eigen_vectors_dict.pickle'.format(data_type)
-
     category_number = 10
     # display eigen vectors dictionary in row_number x column_number format
     row_number = 5
@@ -70,12 +67,12 @@ def make_subspace_similarity_dict(data_type):
     
     # Check if the subspace eigen dictionaries already exist.
     subspace_eigen_values_dict_file_name = 'x_{}_subspace_eigen_values_dict.pickle'.format(data_type)
-    subspace_eigen_vector_dict_file_name = 'x_{}_subspace_eigen_vectors_dict.pickle'.format(data_type)
+    subspace_eigen_vectors_dict_file_name = 'x_{}_subspace_eigen_vectors_dict.pickle'.format(data_type)
     if os.path.exists(subspace_eigen_values_dict_file_name) \
-            and os.path.exists(subspace_eigen_values_dict_file_name):
+            and os.path.exists(subspace_eigen_vectors_dict_file_name):
         with open(subspace_eigen_values_dict_file_name, 'rb') as f:
             subspace_eigen_values_dict = pickle.load(f)
-        with open(subspace_eigen_vector_dict_file_name, 'rb') as f:
+        with open(subspace_eigen_vectors_dict_file_name, 'rb') as f:
             subspace_eigen_vectors_dict = pickle.load(f)
     else:
         # Read data and add to each category.
@@ -109,7 +106,7 @@ def make_subspace_similarity_dict(data_type):
         for i in range(eigen_number):
             ax1 = fig.add_subplot(row_number, column_number, c * eigen_number + i + 1)
             img = img_c[:,i].reshape(original_image_size, original_image_size)
-            ax1.set_title('{} {} ({})'.format(data_type, c, count_data[c]))
+            ax1.set_title('{} {}'.format(data_type, c))
 
             # No labels and no ticks.
             ax1.tick_params(labelbottom=False, labelleft=False, labelright=False,
@@ -119,9 +116,9 @@ def make_subspace_similarity_dict(data_type):
     plt.show()
 
     # Save the subspace eigen values and vectors dictionaries.
-    with open(eigen_values_dict_file_name, 'wb') as f:
+    with open(subspace_eigen_values_dict_file_name, 'wb') as f:
         pickle.dump(subspace_eigen_values_dict, f)
-    with open(eigen_vectors_dict_file_name, 'wb') as f:
+    with open(subspace_eigen_vectors_dict_file_name, 'wb') as f:
         pickle.dump(subspace_eigen_vectors_dict, f)
 
     return subspace_eigen_values_dict, subspace_eigen_vectors_dict
@@ -130,7 +127,7 @@ def make_subspace_similarity_dict(data_type):
 def recognize_image_samples_subspace_similarity \
             (data_type, eigen_vectors_matrix_file, dim):
     """
-    Recognize image samples using multiple similarity
+    Recognize image samples using similarity in subspaces.
     :param data_type: train or test. samples to be recognized.
     :param eigen_vectors_matrix_file: pickled file of eigen vectors matrix
         of autocorrelation matrix
@@ -181,8 +178,8 @@ def recognize_image_samples_subspace_similarity \
 if __name__ == '__main__':
 
     make_subspace_similarity_dict('train')
-    # eigen_values_file = 'x_train_eigen_values_dict.pickle'
-    eigen_vectors_file = 'x_train_eigen_vectors_dict.pickle'
+    # eigen_values_file = 'x_train_subspace_eigen_values_dict.pickle'
+    eigen_vectors_file = 'x_train_subspace_eigen_vectors_dict.pickle'
     dim = 30
     confusion_matrix = recognize_image_samples_subspace_similarity \
         ('test', eigen_vectors_file, dim)
