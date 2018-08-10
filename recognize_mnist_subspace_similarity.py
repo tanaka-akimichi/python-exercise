@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 import pickle
 from pylab import rcParams
 
@@ -18,8 +19,8 @@ print('x_test size: {}'.format(len(x_test)))
 original_image_size = 28
 
 # Extend the display size.
-# rcParams['figure.figsize'] = 10, 10
-rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
+rcParams['figure.figsize'] = 10, 10
+# rcParams['figure.figsize'] = 20, 20  # for ASUS Note PC
 
 
 def calculate_subspace_similarity(x, eigen_vectors, dim):
@@ -117,7 +118,7 @@ def make_subspace_similarity_dict(data_type):
             ax1.imshow(img, cmap='bone')
     plt.show()
 
-    # Save the average image dictionary.
+    # Save the subspace eigen values and vectors dictionaries.
     with open(eigen_values_dict_file_name, 'wb') as f:
         pickle.dump(subspace_eigen_values_dict, f)
     with open(eigen_vectors_dict_file_name, 'wb') as f:
@@ -179,7 +180,7 @@ def recognize_image_samples_subspace_similarity \
 
 if __name__ == '__main__':
 
-    # make_subspace_similarity_dict('train')
+    make_subspace_similarity_dict('train')
     # eigen_values_file = 'x_train_eigen_values_dict.pickle'
     eigen_vectors_file = 'x_train_eigen_vectors_dict.pickle'
     dim = 30
