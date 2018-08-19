@@ -13,11 +13,9 @@ class TwoLayerNet:
         # 重みの初期化
         self.params = {}
         self.params['W1'] = weight_init_std * np.random.randn(hidden_size, input_size)
-        row_b1 = np.zeros(hidden_size)
-        self.params['b1'] = row_b1[:, np.newaxis]
+        self.params['b1'] = np.zeros((hidden_size, 1))
         self.params['W2'] = weight_init_std * np.random.randn(output_size, hidden_size)
-        row_b2 = np.zeros(output_size)
-        self.params['b2'] = row_b2[:, np.newaxis]
+        self.params['b2'] = np.zeros((output_size, 1))
 
     def predict(self, x):
         W1, W2 = self.params['W1'], self.params['W2']
@@ -61,23 +59,32 @@ class TwoLayerNet:
         b1, b2 = self.params['b1'], self.params['b2']
         grads = {}
         
-        batch_num = x.shape[0]
+        batch_num = x.shape[1]
         
         # forward
         a1 = np.dot(W1, x) + b1
         z1 = sigmoid(a1)
         a2 = np.dot(W2, z1) + b2
-        y = softmax(a2)
+        dy = softmax(a2)
         
         # backward
-        dy = (y - t) / batch_num
-        grads['W2'] = np.dot(z1, dy.T)
-        grads['b2'] = np.sum(dy, axis=0)
-        
-        dz1 = np.dot(W2, dy.T)
-        da1 = sigmoid_grad(a1) * dz1
+        grads['W2'] = np.dot(dy, z1.T)
+        # grads['b2'] = np.sum(dy, axis=1)
+
+        b2_value = np.empty((dy.shape[0], 1))
+        for i in range(dy.shape[0]):
+            b2_value[i] = sum(dy[i])
+        grads['b2'] = b2_value
+
+        dz1 = np.dot(dy.T, W2)
+        da1 = sigmoid_grad(a1) * dz1.T
         grads['W1'] = np.dot(da1, x.T)
-        grads['b1'] = np.sum(da1, axis=0)
+        # grads['b1'] = np.sum(da1, axis=1)
+
+        b1_value = np.empty((da1.shape[0], 1))
+        for i in range(da1.shape[0]):
+            b1_value[i] = sum(da1[i])
+        grads['b1'] = b1_value
 
         return grads
 

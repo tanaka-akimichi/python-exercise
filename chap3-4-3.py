@@ -2,7 +2,7 @@
 Both codes of row vector times matrix and matrix times column vector
 are provided.
 As a method of converting a row vector to a column vector,
-  method 1: using x [:, newaxis],
+  method 1: using x [:, np.newaxis],
   method 2: a method using np.matrix () and T (transpose)
 are used.
 Comparing the processing speed of the original method with the method 1

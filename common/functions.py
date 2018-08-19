@@ -1,3 +1,5 @@
+# Modify for column vectors input
+
 # coding: utf-8
 import numpy as np
 
@@ -29,14 +31,18 @@ def relu_grad(x):
     
 
 def softmax(x):
-    if x.ndim == 2:
-        x = x.T
-        x = x - np.max(x, axis=0)
-        y = np.exp(x) / np.sum(np.exp(x), axis=0)
-        return y.T 
-
-    x = x - np.max(x) # オーバーフロー対策
-    return np.exp(x) / np.sum(np.exp(x))
+    if len(x.shape) >= 2:
+        num = x.shape[1]
+        y = np.empty_like(x).T
+        for i in range(num):
+            x[:, i] = x[:, i] - np.max(x[:, i])  # オーバーフロー対策
+            y_tmp = np.exp(x[:, i]) / np.sum(np.exp(x[:, i]))
+            # y[:, i] = y_tmp[:,np.newaxis]
+            y[i] = y_tmp
+        return y
+    else:
+        x = x - np.max(x, axis=0)   # オーバーフロー対策
+        return np.exp(x) / np.sum(np.exp(x), axis=0)
 
 
 def mean_squared_error(y, t):
@@ -59,3 +65,10 @@ def cross_entropy_error(y, t):
 def softmax_loss(X, t):
     y = softmax(X)
     return cross_entropy_error(y, t)
+
+if __name__ == '__main__':
+
+    # x = np.array([0.1, 0.2, 0.4, 0.1, 0.1])
+    # x = np.array([[0.1, 0.2], [0.3, 0.5], [0.2, 0.6]])
+    x = np.array([[0, 1], [1, 2], [2, 3]])
+    print(softmax(x))
