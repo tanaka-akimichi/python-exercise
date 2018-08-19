@@ -31,18 +31,8 @@ def relu_grad(x):
     
 
 def softmax(x):
-    if len(x.shape) >= 2:
-        num = x.shape[1]
-        y = np.empty_like(x).T
-        for i in range(num):
-            x[:, i] = x[:, i] - np.max(x[:, i])  # オーバーフロー対策
-            y_tmp = np.exp(x[:, i]) / np.sum(np.exp(x[:, i]))
-            # y[:, i] = y_tmp[:,np.newaxis]
-            y[i] = y_tmp
-        return y
-    else:
-        x = x - np.max(x, axis=0)   # オーバーフロー対策
-        return np.exp(x) / np.sum(np.exp(x), axis=0)
+    x = x - np.max(x, axis=0)   # オーバーフロー対策
+    return np.exp(x) / np.sum(np.exp(x), axis=0)
 
 
 def mean_squared_error(y, t):
@@ -50,16 +40,16 @@ def mean_squared_error(y, t):
 
 
 def cross_entropy_error(y, t):
-    if y.ndim == 1:
-        t = t.reshape(1, t.size)
-        y = y.reshape(1, y.size)
+    # if y.ndim == 1:
+    #     t = t.reshape(1, t.size)
+    #     y = y.reshape(1, y.size)
         
     # 教師データがone-hot-vectorの場合、正解ラベルのインデックスに変換
     if t.size == y.size:
-        t = t.argmax(axis=1)
+        t = t.argmax(axis=0)
              
-    batch_size = y.shape[0]
-    return -np.sum(np.log(y[np.arange(batch_size), t] + 1e-7)) / batch_size
+    batch_size = y.shape[1]
+    return -np.sum(np.log(y[t, np.arange(batch_size)] + 1e-7)) / batch_size
 
 
 def softmax_loss(X, t):
@@ -68,7 +58,13 @@ def softmax_loss(X, t):
 
 if __name__ == '__main__':
 
-    # x = np.array([0.1, 0.2, 0.4, 0.1, 0.1])
-    # x = np.array([[0.1, 0.2], [0.3, 0.5], [0.2, 0.6]])
-    x = np.array([[0, 1], [1, 2], [2, 3]])
+    x = np.array([[0, 1], [1, 2], [2, 4]])
     print(softmax(x))
+
+    y = np.array([[1], [2], [2], [0]])
+    t = np.array([[2], [1], [2], [-2]])
+    print('mse={}'.format(mean_squared_error(y, t)))
+
+    y = np.array([[0.2], [0.5], [0.3]])
+    t = np.array([[0], [1], [0]])
+    print(cross_entropy_error(y, t))
