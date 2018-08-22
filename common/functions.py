@@ -65,6 +65,6 @@ if __name__ == '__main__':
     t = np.array([[2], [1], [2], [-2]])
     print('mse={}'.format(mean_squared_error(y, t)))
 
-    y = np.array([[0.2], [0.5], [0.3]])
-    t = np.array([[0], [1], [0]])
+    y = np.array([[0.2, 0.6], [0.5, 0.2], [0.3, 0.2]])
+    t = np.array([[0, 1], [1, 0], [0, 0]])
     print(cross_entropy_error(y, t))

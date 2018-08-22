@@ -30,7 +30,7 @@ for i in range(iters_num):
     my_t_batch = t_batch.T
     
     # 勾配の計算
-    #grad = network.numerical_gradient(x_batch, t_batch)
+    # grad = network.numerical_gradient(my_x_batch, my_t_batch)
     grad = network.gradient(my_x_batch, my_t_batch)
     
     # パラメータの更新
@@ -41,8 +41,8 @@ for i in range(iters_num):
     train_loss_list.append(loss)
     
     if i % iter_per_epoch == 0:
-        train_acc = network.accuracy(x_train, t_train)
-        test_acc = network.accuracy(x_test, t_test)
+        train_acc = network.accuracy(my_x_batch, my_t_batch)
+        test_acc = network.accuracy(x_test.T, t_test.T)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
         print("train acc, test acc | " + str(train_acc) + ", " + str(test_acc))

@@ -36,10 +36,10 @@ class TwoLayerNet:
     
     def accuracy(self, x, t):
         y = self.predict(x)
-        y = np.argmax(y, axis=1)
-        t = np.argmax(t, axis=1)
+        y = np.argmax(y, axis=0)
+        t = np.argmax(t, axis=0)
         
-        accuracy = np.sum(y == t) / float(x.shape[0])
+        accuracy = np.sum(y == t) / float(x.shape[1])
         return accuracy
         
     # x:入力データ, t:教師データ
@@ -65,26 +65,31 @@ class TwoLayerNet:
         a1 = np.dot(W1, x) + b1
         z1 = sigmoid(a1)
         a2 = np.dot(W2, z1) + b2
-        dy = softmax(a2)
+        y = softmax(a2)
         
         # backward
+        dy = (y - t) / batch_num
         grads['W2'] = np.dot(dy, z1.T)
-        # grads['b2'] = np.sum(dy, axis=1)
+        b2_value = np.sum(dy, axis=1)
+        grads['b2'] = np.c_[b2_value]  # row vector to column vector
 
-        b2_value = np.empty((dy.shape[0], 1))
-        for i in range(dy.shape[0]):
-            b2_value[i] = sum(dy[i])
-        grads['b2'] = b2_value
+        # Following codes are redundant!
+        # b2_value = np.empty((dy.shape[0], 1))
+        # for i in range(dy.shape[0]):
+        #     b2_value[i] = sum(dy[i])
+        # grads['b2'] = b2_value
 
         dz1 = np.dot(dy.T, W2)
         da1 = sigmoid_grad(a1) * dz1.T
         grads['W1'] = np.dot(da1, x.T)
-        # grads['b1'] = np.sum(da1, axis=1)
+        b1_value = np.sum(da1, axis=1)
+        grads['b1'] = np.c_[b1_value]  # row vector to column vector
 
-        b1_value = np.empty((da1.shape[0], 1))
-        for i in range(da1.shape[0]):
-            b1_value[i] = sum(da1[i])
-        grads['b1'] = b1_value
+        # Following codes are redundant!
+        # b1_value = np.empty((da1.shape[0], 1))
+        # for i in range(da1.shape[0]):
+        #     b1_value[i] = sum(da1[i])
+        # grads['b1'] = b1_value
 
         return grads
 
