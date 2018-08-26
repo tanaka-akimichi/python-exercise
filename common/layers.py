@@ -39,7 +39,7 @@ class Sigmoid:
 
 class Affine:
     def __init__(self, W, b):
-        self.W =W
+        self.W = W
         self.b = b
         
         self.x = None
@@ -54,15 +54,16 @@ class Affine:
         x = x.reshape(x.shape[0], -1)
         self.x = x
 
-        out = np.dot(self.x, self.W) + self.b
+        out = np.dot(self.W, self.x) + self.b  # modify
 
         return out
 
     def backward(self, dout):
-        dx = np.dot(dout, self.W.T)
-        self.dW = np.dot(self.x.T, dout)
-        self.db = np.sum(dout, axis=0)
-        
+        dx = np.dot(self.W.T, dout)  # Modify
+        self.dW = np.dot(dout, self.x.T)  # Modify
+        db_value = np.sum(dout, axis=1)  # Modify
+        self.db = np.c_[db_value]  # row vector to column vector
+
         dx = dx.reshape(*self.original_x_shape)  # 入力データの形状に戻す（テンソル対応）
         return dx
 
@@ -81,7 +82,7 @@ class SoftmaxWithLoss:
         return self.loss
 
     def backward(self, dout=1):
-        batch_size = self.t.shape[0]
+        batch_size = self.t.shape[1]  # Modify
         if self.t.size == self.y.size: # 教師データがone-hot-vectorの場合
             dx = (self.y - self.t) / batch_size
         else:
