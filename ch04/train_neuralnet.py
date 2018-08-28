@@ -1,4 +1,6 @@
 # coding: utf-8
+# Change the vector to be a column vector, not a row vector.
+
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np

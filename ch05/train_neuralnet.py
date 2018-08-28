@@ -1,4 +1,6 @@
 # coding: utf-8
+# Change the vector to be a column vector, not a row vector.
+
 import sys, os
 sys.path.append(os.pardir)
 
@@ -14,7 +16,7 @@ network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
 
 iters_num = 10000
 # iters_num = 50000
-train_size = x_train.shape[0]
+train_size = x_train.shape[0]  # number of samples
 batch_size = 100
 learning_rate = 0.1
 
@@ -27,9 +29,9 @@ iter_per_epoch = max(train_size / batch_size, 1)
 for i in range(iters_num):
     batch_mask = np.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
-    my_x_batch = x_batch.T
+    my_x_batch = x_batch.T  # 784(dimension) x 100(batch_size)
     t_batch = t_train[batch_mask]
-    my_t_batch = t_batch.T
+    my_t_batch = t_batch.T  # 10(categories) x 100(batch_size)
     
     # 勾配
     # grad = network.numerical_gradient(my_x_batch, my_t_batch)
