@@ -93,7 +93,8 @@ def calculate_L2_distance(x, y, dim):
     Calculated
     :param x: Calculate the distance between x and y.
     :param y:
-    :return: weighted distance
+    :param dim: number of dimensions to be used
+    :return: L2 distance
     """
 
     if len(x) != len(y):

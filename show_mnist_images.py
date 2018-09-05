@@ -13,7 +13,7 @@ from dataset.mnist import load_mnist
 # (x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=False)
 print('x_train size: {}'.format(len(x_train)))
 print('x_test size: {}'.format(len(x_test)))
-original_image_size = 28
+original_image_size = (28, 28)
 
 # Extend the display size.
 rcParams['figure.figsize'] = 10, 10
@@ -29,11 +29,11 @@ def show_label_image(start, row_number, column_number, data_type):
     :param data_type: train or test
     :return: None
     """
-    if data_type != 'train' and data_type != 'test':
-        print("usage: show_label_image(start, row_number, column_number, "
-              "data_type)")
-        print("data_type must be train or test. ({}).".format(data_type))
-        return
+    # if data_type != 'train' and data_type != 'test':
+    #     print("usage: show_label_image(start, row_number, column_number, "
+    #           "data_type)")
+    #     print("data_type must be train or test. ({}).".format(data_type))
+    #     return
 
     fig = plt.figure()
 
@@ -46,7 +46,7 @@ def show_label_image(start, row_number, column_number, data_type):
         label[i] = eval('t_{}[start + i]'.format(data_type))
         ax1.set_title('{} {} ({})'.format(data_type, start + i, str(label[i])))
 
-        img[i] = img[i].reshape(original_image_size, original_image_size)
+        img[i] = img[i].reshape(original_image_size)
 
         # No labels and no ticks.
         ax1.tick_params(labelbottom=False, labelleft=False, labelright=False,
@@ -62,10 +62,10 @@ def make_image_dictionary(data_type):
     :param data_type: train or test
     :return: image dictionary
     """
-    if data_type != 'train' and data_type != 'test':
-        print("usage: make_image_discionary(data_type)")
-        print("data_type must be train or test. ({}).".format(data_type))
-        return
+    # if data_type != 'train' and data_type != 'test':
+    #     print("usage: make_image_discionary(data_type)")
+    #     print("data_type must be train or test. ({}).".format(data_type))
+    #     return
 
     category_number = 10
     # display image dictionary in row_number x column_number format
@@ -105,7 +105,7 @@ def make_image_dictionary(data_type):
     # Display the average image for each category.
     for c in range(category_number):
         ax1 = fig.add_subplot(row_number, column_number, c+1)
-        img = img_dict[c].reshape(original_image_size, original_image_size)
+        img = img_dict[c].reshape(original_image_size)
         ax1.set_title('{} {} ({})'.format(data_type, c, count_dict[c]))
 
         # No labels and no ticks.
@@ -131,10 +131,10 @@ def make_image_eigen_vectors(data_type):
     :param data_type: train or test
     :return: image eigen vectors
     """
-    if data_type != 'train' and data_type != 'test':
-        print("usage: make_image_eigen_vectors(data_type)")
-        print("data_type must be train or test. ({}).".format(data_type))
-        return
+    # if data_type != 'train' and data_type != 'test':
+    #     print("usage: make_image_eigen_vectors(data_type)")
+    #     print("data_type must be train or test. ({}).".format(data_type))
+    #     return
 
     category_number = 10
     # display image dictionary in row_number x column_number format
@@ -185,7 +185,7 @@ def make_image_eigen_vectors(data_type):
         img_c = eigen_vectors_dict[c]
         for i in range(eigen_number):
             ax1 = fig.add_subplot(row_number, column_number, c * eigen_number + i + 1)
-            img = img_c[:,i].reshape(original_image_size, original_image_size)
+            img = img_c[:,i].reshape(original_image_size)
             ax1.set_title('{} {}'.format(data_type, c))
 
             # No labels and no ticks.
@@ -201,17 +201,35 @@ def make_image_eigen_vectors(data_type):
 if __name__ == '__main__':
 
     start_number = input("Please Enter Start Number(start with 0): ")
+    try:
+        int_start_num = int(start_number)
+        # print("num={}".format(int_start_num))
+    except ValueError:
+        print("Start number must be an integer.")
+
     train_or_test = input("Please Enter train or test: ")
+
+    if train_or_test == 'train':
+        if int_start_num < 0 or int_start_num > 59950:
+            print('Start number must be from 0 to 59950 for train data.')
+            exit()
+    elif train_or_test == 'test':
+        if int_start_num < 0 or int_start_num > 9950:
+            print('Start number must be from 0 to 9950 for test data.')
+            exit()
+    else:
+        print("data_type must be train or test. ({}).".format(train_or_test))
+        exit()
 
     # The numbers to be recommended are as follows.
     row_number = 5
     column_number = 10
 
     show_label_image(int(start_number), row_number, column_number, train_or_test)
-    make_image_dictionary('train')
+    make_image_dictionary(train_or_test)
     # make_image_dictionary('test')
 
-    v, w = make_image_eigen_vectors('train')
+    v, w = make_image_eigen_vectors(train_or_test)
 
     sum_all = np.sum(v[0])
     sum = 0
