@@ -19,6 +19,7 @@ iters_num = 10000
 train_size = x_train.shape[0]  # number of samples
 batch_size = 100
 learning_rate = 0.1
+# learning_rate = 0.001
 
 train_loss_list = []
 train_acc_list = []
