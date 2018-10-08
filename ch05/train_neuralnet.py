@@ -5,6 +5,7 @@ import sys, os
 sys.path.append(os.pardir)
 
 import numpy as np
+import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import time
 
@@ -17,10 +18,10 @@ from two_layer_net import TwoLayerNet
 network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
 
 # iters_num = 10000 # dist
-iters_num = 1200
+iters_num = 6000
 train_size = x_train.shape[0]  # number of samples
 # batch_size = 100 # dist
-batch_size = 1000
+batch_size = 200
 learning_rate = 0.1  # dist
 # learning_rate = 0.05
 
@@ -56,10 +57,11 @@ for i in range(iters_num):
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
         # print(train_acc, test_acc)
-        print("train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        # print("train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
 t2 = time.time()
-print('elapsed time={}'.format(t2-t1))
+print('batch_size={}, iters_num={}, elapsed time={}'.\
+      format(batch_size, iters_num, t2-t1))
 
 # グラフの描画
 markers = {'train': 'o', 'test': 's'}
@@ -70,6 +72,8 @@ plt.xlabel("epochs")
 plt.ylabel("accuracy")
 plt.ylim(0, 1.0)
 plt.legend(loc='lower right')
+# To DO
+# plt.savefig(r'c:\Users\akimi\PycharmProjects\python-exercise\histgram.png') # the order is important.
 plt.show()
 
 x = np.arange(len(train_loss_list))
@@ -77,4 +81,6 @@ plt.plot(x, train_loss_list, label='train loss')
 plt.xlabel("iteration")
 plt.ylim(0, 2.5)
 plt.legend(loc='lower right')
+# To DO
+# plt.savefig(r'c:\Users\akimi\PycharmProjects\python-exercise\histgram.png') # the order is important.
 plt.show()
