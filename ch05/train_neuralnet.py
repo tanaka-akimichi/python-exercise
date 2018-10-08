@@ -6,6 +6,8 @@ sys.path.append(os.pardir)
 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+
 from dataset.mnist import load_mnist
 from two_layer_net import TwoLayerNet
 
@@ -14,18 +16,21 @@ from two_layer_net import TwoLayerNet
 
 network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
 
-iters_num = 10000
-# iters_num = 50000
+# iters_num = 10000 # dist
+iters_num = 1200
 train_size = x_train.shape[0]  # number of samples
-batch_size = 100
-learning_rate = 0.1
-# learning_rate = 0.001
+# batch_size = 100 # dist
+batch_size = 1000
+learning_rate = 0.1  # dist
+# learning_rate = 0.05
 
 train_loss_list = []
 train_acc_list = []
 test_acc_list = []
 
 iter_per_epoch = max(train_size / batch_size, 1)
+
+t1 = time.time()
 
 for i in range(iters_num):
     batch_mask = np.random.choice(train_size, batch_size)
@@ -53,6 +58,9 @@ for i in range(iters_num):
         # print(train_acc, test_acc)
         print("train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
+t2 = time.time()
+print('elapsed time={}'.format(t2-t1))
+
 # グラフの描画
 markers = {'train': 'o', 'test': 's'}
 x = np.arange(len(train_acc_list))
@@ -61,5 +69,12 @@ plt.plot(x, test_acc_list, label='test acc', linestyle='--')
 plt.xlabel("epochs")
 plt.ylabel("accuracy")
 plt.ylim(0, 1.0)
+plt.legend(loc='lower right')
+plt.show()
+
+x = np.arange(len(train_loss_list))
+plt.plot(x, train_loss_list, label='train loss')
+plt.xlabel("iteration")
+plt.ylim(0, 2.5)
 plt.legend(loc='lower right')
 plt.show()
