@@ -6,6 +6,7 @@ sys.path.append(os.pardir)
 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 from dataset.mnist import load_mnist
 from two_layer_net import TwoLayerNet
 
@@ -15,17 +16,17 @@ from two_layer_net import TwoLayerNet
 network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
 
 iters_num = 10000
-# iters_num = 50000
 train_size = x_train.shape[0]  # number of samples
 batch_size = 100
 learning_rate = 0.1
-# learning_rate = 0.001
 
 train_loss_list = []
 train_acc_list = []
 test_acc_list = []
 
 iter_per_epoch = max(train_size / batch_size, 1)
+
+start = time.time()
 
 for i in range(iters_num):
     batch_mask = np.random.choice(train_size, batch_size)
@@ -51,7 +52,10 @@ for i in range(iters_num):
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
         # print(train_acc, test_acc)
-        print("train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        # print("train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+elapsed_time = time.time() - start
+print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
 
 # グラフの描画
 markers = {'train': 'o', 'test': 's'}
