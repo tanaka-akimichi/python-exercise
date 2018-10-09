@@ -1,0 +1,7 @@
+20 epochs
+
+batch_size=50, iters_num=24000, elapsed time=20.402442455291748
+batch_size=100, iters_num=12000, elapsed time=15.650148630142212
+batch_size=200, iters_num=6000, elapsed time=23.997806310653687
+batch_size=300, iters_num=4000, elapsed time=23.263760089874268
+batch_size=400, iters_num=3000, elapsed time=24.304009437561035

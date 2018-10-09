@@ -1,12 +1,15 @@
 # coding: utf-8
 # Change the vector to be a column vector, not a row vector.
+# Add code for time measurement.
 
 import sys, os
 sys.path.append(os.pardir)
 
 import numpy as np
+import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import time
+
 from dataset.mnist import load_mnist
 from two_layer_net import TwoLayerNet
 
@@ -15,10 +18,13 @@ from two_layer_net import TwoLayerNet
 
 network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
 
-iters_num = 10000
+# iters_num = 10000 # dist
+iters_num = 24000
 train_size = x_train.shape[0]  # number of samples
-batch_size = 100
-learning_rate = 0.1
+# batch_size = 100 # dist
+batch_size = 50
+learning_rate = 0.1  # dist
+# learning_rate = 0.05
 
 train_loss_list = []
 train_acc_list = []
@@ -27,6 +33,7 @@ test_acc_list = []
 iter_per_epoch = max(train_size / batch_size, 1)
 
 start = time.time()
+t1 = time.time()
 
 for i in range(iters_num):
     batch_mask = np.random.choice(train_size, batch_size)
@@ -56,8 +63,16 @@ for i in range(iters_num):
 
 elapsed_time = time.time() - start
 print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
+t2 = time.time()
+print('batch_size={}, iters_num={}, elapsed time={}'.\
+      format(batch_size, iters_num, t2-t1))
 
-# グラフの描画
+# グラフの描画 & ファイル保存
+graph_title = "batch_size={}, iterm_num={}".format(batch_size, iters_num)
+png_file_base = r'c:\Users\tanaka.akimichi\PycharmProjects\python-exercise'
+acc_png_file = png_file_base + r'\acc-{}-{}.png'.format(batch_size, iters_num)
+loss_png_file = png_file_base + r'\loss-{}-{}.png'.format(batch_size, iters_num)
+
 markers = {'train': 'o', 'test': 's'}
 x = np.arange(len(train_acc_list))
 plt.plot(x, train_acc_list, label='train acc')
@@ -66,4 +81,15 @@ plt.xlabel("epochs")
 plt.ylabel("accuracy")
 plt.ylim(0, 1.0)
 plt.legend(loc='lower right')
+plt.title(graph_title)
+plt.savefig(acc_png_file) # the order is important.
+plt.show()
+
+x = np.arange(len(train_loss_list))
+plt.plot(x, train_loss_list, label='train loss')
+plt.xlabel("iteration")
+plt.ylim(0, 2.5)
+plt.legend(loc='lower right')
+plt.title(graph_title)
+plt.savefig(loss_png_file) # the order is important.
 plt.show()
